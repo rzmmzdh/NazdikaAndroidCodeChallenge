@@ -1,7 +1,5 @@
 package com.nazdika.code.challenge.model
 
-import com.nazdika.code.challenge.MainActivity
-
 data class MatchModel(
     val matchId: Long? = null,
     val homeTeamScore: Int? = null,
@@ -17,7 +15,7 @@ data class MatchModel(
     val shortDateText: String? = null,
     val hasDetails: Boolean? = null,
     val status: String? = null,
-    val homeTeam: TeamModel? = null,
-    val awayTeam: TeamModel? = null,
+    val homeTeam: Team? = null,
+    val awayTeam: Team? = null,
     override val itemType: Int = 1
-) : MainActivity.ItemType
+) : ItemType
