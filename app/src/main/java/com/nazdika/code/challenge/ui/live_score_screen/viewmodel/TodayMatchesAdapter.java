@@ -1,4 +1,4 @@
-package com.nazdika.code.challenge.ui;
+package com.nazdika.code.challenge.ui.live_score_screen.viewmodel;
 
 import android.content.Context;
 import android.content.res.Resources;

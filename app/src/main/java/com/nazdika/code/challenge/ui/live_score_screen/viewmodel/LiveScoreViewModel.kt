@@ -1,4 +1,4 @@
-package com.nazdika.code.challenge.ui.viewmodel
+package com.nazdika.code.challenge.ui.live_score_screen.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,5 +52,16 @@ class LiveScoreViewModel @Inject constructor(private val liveScoreRepository: Li
                 }
             }
         }
+    }
+
+    fun onSortMatchStartTimeClick() {
+        val sorted =
+            _uiState.value.data.sortedByDescending { it.persianName }
+        viewModelScope.launch {
+            _uiState.update { currentState ->
+                currentState.copy(data = sorted)
+            }
+        }
+
     }
 }
