@@ -2,19 +2,22 @@ package com.nazdika.code.challenge
 
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
+import com.nazdika.code.challenge.databinding.ActivityMainBinding
+import java.io.IOException
+import java.util.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
-import java.io.IOException
-import java.util.Date
-import java.util.TimeZone
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -23,10 +26,16 @@ class MainActivity : AppCompatActivity() {
         .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         .build()
     private lateinit var todayMatchesRequest: Request
+    private lateinit var binding: ActivityMainBinding
+    private val todayMatchesAdapter = TodayMatchesAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.rvTodayMatches.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        binding.rvTodayMatches.adapter = todayMatchesAdapter
         androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         todayMatchesRequest = Request.Builder()
             .url("https://api.nazdika.com/v2/foot/match/live")
@@ -39,12 +48,16 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(call: Call, e: IOException) {
                     call.cancel()
                     runOnUiThread {
-                        Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_LONG)
+                        binding.progressbar.visibility = View.GONE
+                        Toast.makeText(this@MainActivity, e.localizedMessage, Toast.LENGTH_LONG)
                             .show()
                     }
                 }
 
                 override fun onResponse(call: Call, response: Response) {
+                    runOnUiThread {
+                        binding.progressbar.visibility = View.GONE
+                    }
                     val body = response.body?.string()
                     val gson = GsonBuilder().create()
                     val todayMatches = gson.fromJson(body, SoccerMatchesResultPojo::class.java)
@@ -68,7 +81,50 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showTodayMatches(competitionMatches: List<CompetitionMatchPojo?>) {
-
+        todayMatchesAdapter.addItems(buildList {
+            competitionMatches.forEach { competitionMatch ->
+                add(
+                    CompetitionMatchModel(
+                        competitionMatch?.competitionId,
+                        competitionMatch?.persianName,
+                        competitionMatch?.logo,
+                        competitionMatch?.localizedName
+                    )
+                )
+                addAll(competitionMatch?.matches?.map {
+                    MatchModel(
+                        it.matchId,
+                        it.homeTeamScore,
+                        it.awayTeamScore,
+                        it.homeTeamPen,
+                        it.awayTeamPen,
+                        it.matchStarted,
+                        it.liveUrl,
+                        it.liveStreamUrl,
+                        it.hasVideo,
+                        it.matchEnded,
+                        it.hasLive,
+                        it.shortDateText,
+                        it.hasDetails,
+                        it.status,
+                        TeamModel(
+                            it.homeTeam?.teamId,
+                            it.homeTeam?.englishName,
+                            it.homeTeam?.englishName,
+                            it.homeTeam?.logo,
+                            it.homeTeam?.localizedName
+                        ),
+                        TeamModel(
+                            it.awayTeam?.teamId,
+                            it.awayTeam?.englishName,
+                            it.awayTeam?.englishName,
+                            it.awayTeam?.logo,
+                            it.awayTeam?.localizedName
+                        )
+                    )
+                } ?: return@forEach)
+            }
+        })
     }
 
     private fun getTimeZoneOffsetFromUTC(): Int {
@@ -147,6 +203,46 @@ class MainActivity : AppCompatActivity() {
         @SerializedName("logo")
         val logo: String? = null,
         @SerializedName("localized_name")
+        val localizedName: String? = null
+    )
+
+    interface ItemType {
+        val itemType: Int
+    }
+
+    data class CompetitionMatchModel(
+        val competitionId: Int? = null,
+        val persianName: String? = null,
+        val logo: String? = null,
+        val localizedName: String? = null,
+        override val itemType: Int = 0
+    ) : ItemType
+
+    data class MatchModel(
+        val matchId: Long? = null,
+        val homeTeamScore: Int? = null,
+        val awayTeamScore: Int? = null,
+        val homeTeamPen: Int? = null,
+        val awayTeamPen: Int? = null,
+        val matchStarted: Boolean? = null,
+        val liveUrl: String? = null,
+        val liveStreamUrl: String? = null,
+        val hasVideo: Boolean? = null,
+        val matchEnded: Boolean? = null,
+        val hasLive: Boolean? = null,
+        val shortDateText: String? = null,
+        val hasDetails: Boolean? = null,
+        val status: String? = null,
+        val homeTeam: TeamModel? = null,
+        val awayTeam: TeamModel? = null,
+        override val itemType: Int = 1
+    ) : ItemType
+
+    data class TeamModel(
+        val teamId: Long? = null,
+        val englishName: String? = null,
+        val persianName: String? = null,
+        val logo: String? = null,
         val localizedName: String? = null
     )
 }
