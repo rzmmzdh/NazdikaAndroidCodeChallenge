@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class LiveScoreRepository @Inject constructor(private val liveScoreRemoteDataSource: LiveScoreRemoteDataSource) {
-    suspend fun getTodayMatches(): Flow<Result<List<CompetitionMatch?>?>> =
+    suspend fun getTodayMatches(): Flow<Result<List<CompetitionMatch>>> =
         flow {
             val result = liveScoreRemoteDataSource.getTodayMatches()
             emit(Result.Loading)
@@ -19,8 +19,7 @@ class LiveScoreRepository @Inject constructor(private val liveScoreRemoteDataSou
                     emit(
                         Result.Success(
                             data = result.body()?.data?.competitionMatches?.map {
-                                it?.asCompetitionMatch()
-                                    ?: CompetitionMatch()
+                                it.asCompetitionMatch()
                             }
                                 ?: emptyList()
                         )

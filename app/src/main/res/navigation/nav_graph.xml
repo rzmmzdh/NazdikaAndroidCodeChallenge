@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/liveScoreFragment">
+    <fragment
+        android:id="@+id/liveScoreFragment"
+        android:name="com.nazdika.code.challenge.ui.live_score_screen.LiveScoreFragment"
+        android:label="fragment_live_score"
+        tools:layout="@layout/fragment_live_score" />
+</navigation>

@@ -13,7 +13,7 @@ data class CompetitionMatchDto(
     @SerializedName("localized_name")
     val localizedName: String? = null,
     @SerializedName("matches")
-    val matches: List<MatchDto>? = null
+    val matches: List<MatchDto> = emptyList()
 )
 
 fun CompetitionMatchDto.asCompetitionMatch() =
@@ -22,5 +22,5 @@ fun CompetitionMatchDto.asCompetitionMatch() =
         persianName = persianName,
         logo = logo,
         localizedName = localizedName,
-        matches = matches?.map { it.asMatch() }
+        matches = matches.map { it.asMatch() }
     )

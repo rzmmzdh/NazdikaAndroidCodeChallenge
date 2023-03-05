@@ -6,12 +6,8 @@ import com.nazdika.code.challenge.model.SoccerMatchResultData
 
 data class SoccerMatchesResultDataDto(
     @SerializedName("competition_matches")
-    val competitionMatches: List<CompetitionMatchDto?>? = null
+    val competitionMatches: List<CompetitionMatchDto> = emptyList()
 )
 
 fun SoccerMatchesResultDataDto.asSoccerMatchesData() =
-    SoccerMatchResultData(competitionMatches = competitionMatches?.map {
-        it?.asCompetitionMatch()
-            ?: CompetitionMatch()
-    }
-        ?: emptyList())
+    SoccerMatchResultData(competitionMatches = competitionMatches.map { it.asCompetitionMatch() })
