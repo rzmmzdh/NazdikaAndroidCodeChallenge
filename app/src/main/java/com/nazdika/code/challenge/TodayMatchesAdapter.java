@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nazdika.code.challenge.databinding.ItemCompetitionBinding;
 import com.nazdika.code.challenge.databinding.ItemMatchBinding;
+import com.nazdika.code.challenge.model.CompetitionMatchModel;
+import com.nazdika.code.challenge.model.MatchModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +59,7 @@ public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (items.get(position).getItemType() == 0) {
-            MainActivity.CompetitionMatchModel competition = (MainActivity.CompetitionMatchModel) items.get(position);
+            CompetitionMatchModel competition = (CompetitionMatchModel) items.get(position);
             CompetitionMatchViewHolder viewHolder = (CompetitionMatchViewHolder) holder;
             if (competition.getPersianName() != null) {
                 viewHolder.binding.tvCompetitionName.setText(competition.getPersianName());
@@ -69,7 +71,7 @@ public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((CompetitionMatchViewHolder) holder).binding.imgLogo.setImageURI(uri);
         } else if (items.get(position).getItemType() == 1) {
             MatchViewHolder viewHolder = (MatchViewHolder) holder;
-            MainActivity.MatchModel match = (MainActivity.MatchModel) items.get(position);
+            MatchModel match = (MatchModel) items.get(position);
             viewHolder.binding.tvAwayTeamName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_light));
             viewHolder.binding.tvHomeTeamName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_light));
             viewHolder.binding.imgAwayTemLogo.setImageURI(Uri.parse(match.getAwayTeam().getLogo()));
