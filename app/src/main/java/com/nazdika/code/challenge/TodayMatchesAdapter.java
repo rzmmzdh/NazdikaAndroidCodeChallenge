@@ -1,12 +1,17 @@
 package com.nazdika.code.challenge;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.ViewKt;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nazdika.code.challenge.databinding.ItemCompetitionBinding;
@@ -17,6 +22,11 @@ import java.util.List;
 
 public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<MainActivity.ItemType> items = new ArrayList<>();
+    private Context context;
+
+    public TodayMatchesAdapter(Context context) {
+        this.context = context;
+    }
 
     public void addItems(List<MainActivity.ItemType> items) {
         this.items.addAll(items);
@@ -47,19 +57,56 @@ public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (items.get(position).getItemType() == 0) {
-            MainActivity.CompetitionMatchModel model = (MainActivity.CompetitionMatchModel) items.get(position);
+            MainActivity.CompetitionMatchModel competition = (MainActivity.CompetitionMatchModel) items.get(position);
             CompetitionMatchViewHolder viewHolder = (CompetitionMatchViewHolder) holder;
-            if (model.getPersianName() != null) {
-                viewHolder.binding.tvCompetitionName.setText(model.getPersianName());
+            if (competition.getPersianName() != null) {
+                viewHolder.binding.tvCompetitionName.setText(competition.getPersianName());
             } else {
-                viewHolder.binding.tvCompetitionName.setText(model.getLocalizedName());
+                viewHolder.binding.tvCompetitionName.setText(competition.getLocalizedName());
             }
-            viewHolder.binding.tvCompetitionName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_bold));
-            Uri uri = Uri.parse(model.getLogo());
+            viewHolder.binding.tvCompetitionName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_medium));
+            Uri uri = Uri.parse(competition.getLogo());
             ((CompetitionMatchViewHolder) holder).binding.imgLogo.setImageURI(uri);
         } else if (items.get(position).getItemType() == 1) {
             MatchViewHolder viewHolder = (MatchViewHolder) holder;
+            MainActivity.MatchModel match = (MainActivity.MatchModel) items.get(position);
+            viewHolder.binding.tvAwayTeamName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_light));
+            viewHolder.binding.tvHomeTeamName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_light));
+            viewHolder.binding.imgAwayTemLogo.setImageURI(Uri.parse(match.getAwayTeam().getLogo()));
+            viewHolder.binding.imgHomeTeamLogo.setImageURI(Uri.parse(match.getHomeTeam().getLogo()));
+            if (match.getHomeTeam().getPersianName() != null) {
+                viewHolder.binding.tvHomeTeamName.setText(match.getHomeTeam().getPersianName());
+            } else {
+                viewHolder.binding.tvHomeTeamName.setText(match.getHomeTeam().getLocalizedName());
+            }
+
+            if (match.getAwayTeam().getPersianName() != null) {
+                viewHolder.binding.tvAwayTeamName.setText(match.getAwayTeam().getPersianName());
+            } else {
+                viewHolder.binding.tvAwayTeamName.setText(match.getAwayTeam().getLocalizedName());
+            }
+
+            if (match.getMatchStarted() == false && (match.getMatchEnded() == false || match.getMatchEnded() == true)) {
+                viewHolder.binding.tvStatus.setVisibility(View.GONE);
+                ViewKt.updateLayoutParams(viewHolder.binding.tvStatus, layoutParams -> {
+                    ((ConstraintLayout.LayoutParams) layoutParams).topMargin = (int) dpToPx(8f);
+                    return null;
+                });
+                viewHolder.binding.tvScores.setText(match.getStatus());
+                viewHolder.binding.tvScores.setTextColor(context.getResources().getColor(R.color.gray));
+            } else {
+                viewHolder.binding.tvStatus.setVisibility(View.VISIBLE);
+            }
         }
+    }
+
+    private float dpToPx(float dp) {
+        Resources r = context.getResources();
+        return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                r.getDisplayMetrics()
+        );
     }
 
     @Override

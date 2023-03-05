@@ -27,12 +27,13 @@ class MainActivity : AppCompatActivity() {
         .build()
     private lateinit var todayMatchesRequest: Request
     private lateinit var binding: ActivityMainBinding
-    private val todayMatchesAdapter = TodayMatchesAdapter()
+    private lateinit var todayMatchesAdapter: TodayMatchesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        todayMatchesAdapter = TodayMatchesAdapter(applicationContext)
         binding.rvTodayMatches.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.rvTodayMatches.adapter = todayMatchesAdapter
@@ -110,14 +111,14 @@ class MainActivity : AppCompatActivity() {
                         TeamModel(
                             it.homeTeam?.teamId,
                             it.homeTeam?.englishName,
-                            it.homeTeam?.englishName,
+                            it.homeTeam?.persianName,
                             it.homeTeam?.logo,
                             it.homeTeam?.localizedName
                         ),
                         TeamModel(
                             it.awayTeam?.teamId,
                             it.awayTeam?.englishName,
-                            it.awayTeam?.englishName,
+                            it.awayTeam?.persianName,
                             it.awayTeam?.logo,
                             it.awayTeam?.localizedName
                         )
