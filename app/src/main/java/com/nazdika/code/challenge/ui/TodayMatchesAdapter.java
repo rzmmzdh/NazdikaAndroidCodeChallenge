@@ -1,4 +1,4 @@
-package com.nazdika.code.challenge;
+package com.nazdika.code.challenge.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -14,23 +14,25 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewKt;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nazdika.code.challenge.R;
 import com.nazdika.code.challenge.databinding.ItemCompetitionBinding;
 import com.nazdika.code.challenge.databinding.ItemMatchBinding;
-import com.nazdika.code.challenge.model.CompetitionMatchModel;
+import com.nazdika.code.challenge.model.CompetitionMatch;
+import com.nazdika.code.challenge.model.ItemType;
 import com.nazdika.code.challenge.model.MatchModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final List<MainActivity.ItemType> items = new ArrayList<>();
+    private final List<ItemType> items = new ArrayList<>();
     private Context context;
 
     public TodayMatchesAdapter(Context context) {
         this.context = context;
     }
 
-    public void addItems(List<MainActivity.ItemType> items) {
+    public void addItems(List<ItemType> items) {
         this.items.addAll(items);
         notifyDataSetChanged();
     }
@@ -59,7 +61,7 @@ public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (items.get(position).getItemType() == 0) {
-            CompetitionMatchModel competition = (CompetitionMatchModel) items.get(position);
+            CompetitionMatch competition = (CompetitionMatch) items.get(position);
             CompetitionMatchViewHolder viewHolder = (CompetitionMatchViewHolder) holder;
             if (competition.getPersianName() != null) {
                 viewHolder.binding.tvCompetitionName.setText(competition.getPersianName());
