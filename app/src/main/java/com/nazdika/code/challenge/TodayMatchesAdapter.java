@@ -1,10 +1,12 @@
 package com.nazdika.code.challenge;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nazdika.code.challenge.databinding.ItemCompetitionBinding;
@@ -45,7 +47,16 @@ public class TodayMatchesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (items.get(position).getItemType() == 0) {
+            MainActivity.CompetitionMatchModel model = (MainActivity.CompetitionMatchModel) items.get(position);
             CompetitionMatchViewHolder viewHolder = (CompetitionMatchViewHolder) holder;
+            if (model.getPersianName() != null) {
+                viewHolder.binding.tvCompetitionName.setText(model.getPersianName());
+            } else {
+                viewHolder.binding.tvCompetitionName.setText(model.getLocalizedName());
+            }
+            viewHolder.binding.tvCompetitionName.setTypeface(ResourcesCompat.getFont(viewHolder.itemView.getContext(), R.font.vazir_bold));
+            Uri uri = Uri.parse(model.getLogo());
+            ((CompetitionMatchViewHolder) holder).binding.imgLogo.setImageURI(uri);
         } else if (items.get(position).getItemType() == 1) {
             MatchViewHolder viewHolder = (MatchViewHolder) holder;
         }
