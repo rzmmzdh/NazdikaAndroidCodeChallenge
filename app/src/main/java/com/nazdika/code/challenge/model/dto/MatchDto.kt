@@ -1,9 +1,9 @@
-package com.nazdika.code.challenge.model
+package com.nazdika.code.challenge.model.dto
 
 import com.google.gson.annotations.SerializedName
-import com.nazdika.code.challenge.MainActivity
+import com.nazdika.code.challenge.model.MatchModel
 
-data class MatchPojo(
+data class MatchDto(
     @SerializedName("match_id")
     val matchId: Long? = null,
     @SerializedName("home_team_score")
@@ -33,8 +33,27 @@ data class MatchPojo(
     @SerializedName("status")
     val status: String? = null,
     @SerializedName("home_team")
-    val homeTeam: TeamPojo? = null,
+    val homeTeam: TeamDto? = null,
     @SerializedName("away_team")
-    val awayTeam: TeamPojo? = null
+    val awayTeam: TeamDto? = null
+)
+
+fun MatchDto.asMatch() = MatchModel(
+    matchId = matchId,
+    homeTeamScore = homeTeamScore,
+    awayTeamScore = awayTeamScore,
+    homeTeamPen = homeTeamPen,
+    awayTeamPen = awayTeamPen,
+    matchStarted = matchStarted,
+    liveUrl = liveUrl,
+    liveStreamUrl = liveStreamUrl,
+    hasVideo = hasVideo,
+    matchEnded = matchEnded,
+    hasLive = hasLive,
+    shortDateText = shortDateText,
+    hasDetails = hasDetails,
+    status = status,
+    homeTeam = homeTeam?.asTeam(),
+    awayTeam = awayTeam?.asTeam()
 )
 
