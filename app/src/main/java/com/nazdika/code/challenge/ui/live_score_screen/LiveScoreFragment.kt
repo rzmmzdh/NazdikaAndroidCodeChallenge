@@ -60,7 +60,7 @@ class LiveScoreFragment : Fragment() {
         } else if (it.error != null) {
             binding.progressbar.visibility = View.GONE
             Toast.makeText(
-                this@LiveScoreFragment.context,
+                this@LiveScoreFragment.requireContext(),
                 "${it.error}",
                 Toast.LENGTH_LONG
             )
@@ -72,7 +72,7 @@ class LiveScoreFragment : Fragment() {
     private fun initRecyclerView() {
         todayMatchesAdapter =
             TodayMatchesAdapter(
-                this@LiveScoreFragment.context
+                this@LiveScoreFragment.requireContext()
             )
         binding.rvTodayMatches.layoutManager =
             LinearLayoutManager(this@LiveScoreFragment.context, RecyclerView.VERTICAL, false)
