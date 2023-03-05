@@ -1,12 +1,11 @@
 package com.nazdika.code.challenge.model
 
-import com.nazdika.code.challenge.MainActivity
-
-data class CompetitionMatchModel(
+data class CompetitionMatch(
     val competitionId: Int? = null,
     val persianName: String? = null,
     val logo: String? = null,
     val localizedName: String? = null,
+    val matches: List<MatchModel>? = emptyList(),
     override val itemType: Int = 0
-) : MainActivity.ItemType
+) : ItemType
 
