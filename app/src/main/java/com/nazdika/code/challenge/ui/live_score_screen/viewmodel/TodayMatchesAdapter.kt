@@ -18,6 +18,11 @@ import com.nazdika.code.challenge.model.MatchModel
 
 class TodayMatchesAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        private const val COMPETITION_MATCH_TYPE = 0
+        private const val MATCH_TYPE = 1
+    }
+
     private val items: MutableList<ItemType> = ArrayList()
     fun addItems(items: List<ItemType>) {
         this.items.addAll(items)
@@ -31,7 +36,7 @@ class TodayMatchesAdapter(private val context: Context) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            0 -> {
+            COMPETITION_MATCH_TYPE -> {
                 CompetitionMatchViewHolder(
                     layoutInflater.inflate(
                         R.layout.item_competition,
@@ -48,7 +53,7 @@ class TodayMatchesAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (items[position].itemType == 0) {
+        if (items[position].itemType == COMPETITION_MATCH_TYPE) {
             val (_, persianName, logo, localizedName) = items[position] as CompetitionMatch
             val viewHolder = holder as CompetitionMatchViewHolder
             if (persianName != null) {
@@ -62,7 +67,7 @@ class TodayMatchesAdapter(private val context: Context) :
             )
             val uri = Uri.parse(logo)
             holder.binding.imgLogo.setImageURI(uri)
-        } else if (items[position].itemType == 1) {
+        } else if (items[position].itemType == MATCH_TYPE) {
             val viewHolder = holder as MatchViewHolder
             val (_, _, _, _, _, matchStarted, _, _, _, matchEnded, _, _, _, status, homeTeam, awayTeam) = items[position] as MatchModel
             viewHolder.binding.tvAwayTeamName.typeface = ResourcesCompat.getFont(
