@@ -1,7 +1,7 @@
 package com.nazdika.code.challenge.model.dto
 
 import com.google.gson.annotations.SerializedName
-import com.nazdika.code.challenge.model.MatchModel
+import com.nazdika.code.challenge.model.Match
 
 data class MatchDto(
     @SerializedName("match_id")
@@ -38,7 +38,7 @@ data class MatchDto(
     val awayTeam: TeamDto? = null
 )
 
-fun MatchDto.asMatch() = MatchModel(
+fun MatchDto.asMatch() = Match(
     matchId = matchId,
     homeTeamScore = homeTeamScore,
     awayTeamScore = awayTeamScore,

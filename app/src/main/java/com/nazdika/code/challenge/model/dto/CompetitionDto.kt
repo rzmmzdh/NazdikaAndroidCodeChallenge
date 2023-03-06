@@ -1,7 +1,7 @@
 package com.nazdika.code.challenge.model.dto
 
 import com.google.gson.annotations.SerializedName
-import com.nazdika.code.challenge.model.CompetitionMatch
+import com.nazdika.code.challenge.model.Competition
 
 data class CompetitionMatchDto(
     @SerializedName("competition_id")
@@ -17,7 +17,7 @@ data class CompetitionMatchDto(
 )
 
 fun CompetitionMatchDto.asCompetitionMatch() =
-    CompetitionMatch(
+    Competition(
         competitionId = competitionId,
         persianName = persianName,
         logo = logo,

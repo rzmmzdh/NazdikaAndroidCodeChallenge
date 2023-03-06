@@ -13,9 +13,9 @@ import com.bumptech.glide.Glide
 import com.nazdika.code.challenge.R
 import com.nazdika.code.challenge.databinding.ItemCompetitionBinding
 import com.nazdika.code.challenge.databinding.ItemMatchBinding
-import com.nazdika.code.challenge.model.CompetitionMatch
+import com.nazdika.code.challenge.model.Competition
 import com.nazdika.code.challenge.model.ItemType
-import com.nazdika.code.challenge.model.MatchModel
+import com.nazdika.code.challenge.model.Match
 
 class TodayMatchesAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -55,9 +55,10 @@ class TodayMatchesAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         if (matches[position].itemType == COMPETITION_TYPE) {
-            val competition = matches[position] as CompetitionMatch
             val competitionVH = holder as CompetitionMatchViewHolder
+            val competition = matches[position] as Competition
             competitionVH.binding.tvCompetitionName.apply {
                 if (competition.persianName != null) text =
                     competition.persianName else competition.localizedName
@@ -70,7 +71,7 @@ class TodayMatchesAdapter(private val context: Context) :
             }
         } else if (matches[position].itemType == MATCH_TYPE) {
             val matchVH = holder as MatchViewHolder
-            val match = matches[position] as MatchModel
+            val match = matches[position] as Match
             matchVH.binding.tvAwayTeamName.apply {
                 text = match.awayTeam?.persianName ?: match.awayTeam?.localizedName
                 typeface = ResourcesCompat.getFont(

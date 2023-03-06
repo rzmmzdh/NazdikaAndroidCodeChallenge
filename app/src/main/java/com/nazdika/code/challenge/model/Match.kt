@@ -1,6 +1,6 @@
 package com.nazdika.code.challenge.model
 
-data class MatchModel(
+data class Match(
     val matchId: Long? = null,
     val homeTeamScore: Int? = null,
     val awayTeamScore: Int? = null,
