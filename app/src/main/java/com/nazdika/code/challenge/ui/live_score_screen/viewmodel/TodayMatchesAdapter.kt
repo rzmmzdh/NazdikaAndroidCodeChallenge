@@ -55,7 +55,6 @@ class TodayMatchesAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         if (matches[position].itemType == COMPETITION_TYPE) {
             val competition = matches[position] as CompetitionMatch
             val competitionVH = holder as CompetitionMatchViewHolder
