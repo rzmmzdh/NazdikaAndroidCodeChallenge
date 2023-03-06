@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.nazdika.code.challenge.R
 import com.nazdika.code.challenge.databinding.ItemCompetitionBinding
 import com.nazdika.code.challenge.databinding.ItemMatchBinding
@@ -19,24 +20,25 @@ import com.nazdika.code.challenge.model.MatchModel
 class TodayMatchesAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        private const val COMPETITION_MATCH_TYPE = 0
+        private const val COMPETITION_TYPE = 0
         private const val MATCH_TYPE = 1
     }
 
-    private val items: MutableList<ItemType> = ArrayList()
-    fun addItems(items: List<ItemType>) {
-        this.items.addAll(items)
+    private val matches = mutableListOf<ItemType>()
+    fun addItems(matches: List<ItemType>) {
+        this.matches.clear()
+        this.matches.addAll(matches)
         notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int {
-        return items[position].itemType
+        return matches[position].itemType
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            COMPETITION_MATCH_TYPE -> {
+            COMPETITION_TYPE -> {
                 CompetitionMatchViewHolder(
                     layoutInflater.inflate(
                         R.layout.item_competition,
@@ -53,67 +55,67 @@ class TodayMatchesAdapter(private val context: Context) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (items[position].itemType == COMPETITION_MATCH_TYPE) {
-            val (_, persianName, logo, localizedName) = items[position] as CompetitionMatch
-            val viewHolder = holder as CompetitionMatchViewHolder
-            if (persianName != null) {
-                viewHolder.binding.tvCompetitionName.text = persianName
-            } else {
-                viewHolder.binding.tvCompetitionName.text = localizedName
-            }
-            viewHolder.binding.tvCompetitionName.typeface = ResourcesCompat.getFont(
-                viewHolder.itemView.context,
-                R.font.vazir_medium
-            )
-            val uri = Uri.parse(logo)
-            holder.binding.imgLogo.setImageURI(uri)
-        } else if (items[position].itemType == MATCH_TYPE) {
-            val viewHolder = holder as MatchViewHolder
-            val (_, _, _, _, _, matchStarted, _, _, _, matchEnded, _, _, _, status, homeTeam, awayTeam) = items[position] as MatchModel
-            viewHolder.binding.tvAwayTeamName.typeface = ResourcesCompat.getFont(
-                viewHolder.itemView.context,
-                R.font.vazir_light
-            )
-            viewHolder.binding.tvHomeTeamName.typeface = ResourcesCompat.getFont(
-                viewHolder.itemView.context,
-                R.font.vazir_light
-            )
-            viewHolder.binding.imgAwayTemLogo.setImageURI(Uri.parse(awayTeam!!.logo))
-            viewHolder.binding.imgHomeTeamLogo.setImageURI(Uri.parse(homeTeam!!.logo))
-            if (homeTeam.persianName != null) {
-                viewHolder.binding.tvHomeTeamName.text = homeTeam.persianName
-            } else {
-                viewHolder.binding.tvHomeTeamName.text = homeTeam.localizedName
-            }
-            if (awayTeam.persianName != null) {
-                viewHolder.binding.tvAwayTeamName.text = awayTeam.persianName
-            } else {
-                viewHolder.binding.tvAwayTeamName.text = awayTeam.localizedName
-            }
-            if (matchStarted == false && (matchEnded == false || matchEnded == true)) {
-                viewHolder.binding.tvStatus.visibility = View.GONE
-                viewHolder.binding.tvStatus.updatePadding(
-                    top = dpToPx(8f).toInt()
+        if (matches[position].itemType == COMPETITION_TYPE) {
+            val competition = matches[position] as CompetitionMatch
+            val competitionVH = holder as CompetitionMatchViewHolder
+            competitionVH.binding.tvCompetitionName.apply {
+                if (competition.persianName != null) text =
+                    competition.persianName else competition.localizedName
+                typeface = ResourcesCompat.getFont(
+                    competitionVH.itemView.context,
+                    R.font.vazir_medium
                 )
-                viewHolder.binding.tvScores.text = status
-                viewHolder.binding.tvScores.setTextColor(context.resources.getColor(R.color.gray))
+                Glide.with(holder.itemView.context).load(competition.logo)
+                    .into(holder.binding.imgLogo)
+            }
+        } else if (matches[position].itemType == MATCH_TYPE) {
+            val matchVH = holder as MatchViewHolder
+            val match = matches[position] as MatchModel
+            matchVH.binding.tvAwayTeamName.apply {
+                text = match.awayTeam?.persianName ?: match.awayTeam?.localizedName
+                typeface = ResourcesCompat.getFont(
+                    matchVH.itemView.context,
+                    R.font.vazir_light
+                )
+            }
+            matchVH.binding.tvHomeTeamName.apply {
+                text = match.homeTeam?.persianName ?: match.homeTeam?.localizedName
+                typeface = ResourcesCompat.getFont(
+                    matchVH.itemView.context,
+                    R.font.vazir_light
+                )
+            }
+            Glide.with(holder.itemView.context).load(Uri.parse(match.awayTeam!!.logo))
+                .into(matchVH.binding.imgAwayTemLogo)
+            Glide.with(holder.itemView.context).load(Uri.parse(match.homeTeam!!.logo))
+                .into(matchVH.binding.imgHomeTeamLogo)
+
+            if (match.matchStarted == false && (match.matchEnded == false || match.matchEnded == true)) {
+                matchVH.binding.tvStatus.apply {
+                    visibility = View.GONE
+                    updatePadding(top = dpToPx(8f).toInt())
+                }
+                matchVH.binding.tvScores.apply {
+                    text = match.status
+                    setTextColor(context.resources.getColor(R.color.gray))
+                }
             } else {
-                viewHolder.binding.tvStatus.visibility = View.VISIBLE
+                matchVH.binding.tvStatus.visibility = View.VISIBLE
             }
         }
     }
 
     private fun dpToPx(dp: Float): Float {
-        val r = context.resources
+        val resources = context.resources
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
-            r.displayMetrics
+            resources.displayMetrics
         )
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return matches.size
     }
 
     inner class CompetitionMatchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
