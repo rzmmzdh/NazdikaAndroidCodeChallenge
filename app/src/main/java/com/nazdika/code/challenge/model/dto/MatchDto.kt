@@ -6,6 +6,8 @@ import com.nazdika.code.challenge.model.Match
 data class MatchDto(
     @SerializedName("match_id")
     val matchId: Long? = null,
+    @SerializedName("timestamp")
+    val timestamp: Long = 0,
     @SerializedName("home_team_score")
     val homeTeamScore: Int? = null,
     @SerializedName("away_team_score")
@@ -40,6 +42,7 @@ data class MatchDto(
 
 fun MatchDto.asMatch() = Match(
     matchId = matchId,
+    timestamp = timestamp,
     homeTeamScore = homeTeamScore,
     awayTeamScore = awayTeamScore,
     homeTeamPen = homeTeamPen,

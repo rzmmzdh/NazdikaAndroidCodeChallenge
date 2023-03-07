@@ -2,6 +2,7 @@ package com.nazdika.code.challenge.model
 
 data class Match(
     val matchId: Long? = null,
+    val timestamp: Long = 0,
     val homeTeamScore: Int? = null,
     val awayTeamScore: Int? = null,
     val homeTeamPen: Int? = null,
