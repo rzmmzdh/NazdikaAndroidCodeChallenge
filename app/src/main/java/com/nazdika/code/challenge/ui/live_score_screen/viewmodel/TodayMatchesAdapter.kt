@@ -2,12 +2,10 @@ package com.nazdika.code.challenge.ui.live_score_screen.viewmodel
 
 import android.content.Context
 import android.net.Uri
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nazdika.code.challenge.R
@@ -16,6 +14,9 @@ import com.nazdika.code.challenge.databinding.ItemMatchBinding
 import com.nazdika.code.challenge.model.Competition
 import com.nazdika.code.challenge.model.ItemType
 import com.nazdika.code.challenge.model.Match
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class TodayMatchesAdapter(private val context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -25,7 +26,7 @@ class TodayMatchesAdapter(private val context: Context) :
     }
 
     private val matches = mutableListOf<ItemType>()
-    fun addItems(matches: List<ItemType>) {
+    fun addItems(matches: List<ItemType> = emptyList()) {
         this.matches.clear()
         this.matches.addAll(matches)
         notifyDataSetChanged()
@@ -90,29 +91,51 @@ class TodayMatchesAdapter(private val context: Context) :
                 .into(matchVH.binding.imgAwayTemLogo)
             Glide.with(holder.itemView.context).load(Uri.parse(match.homeTeam!!.logo))
                 .into(matchVH.binding.imgHomeTeamLogo)
-
-            if (match.matchStarted == false && (match.matchEnded == false || match.matchEnded == true)) {
+            if (match.matchEnded == true) {
                 matchVH.binding.tvStatus.apply {
-                    visibility = View.GONE
-                    updatePadding(top = dpToPx(8f).toInt())
-                }
-                matchVH.binding.tvScores.apply {
                     text = match.status
-                    setTextColor(context.resources.getColor(R.color.gray))
+                    typeface = ResourcesCompat.getFont(
+                        matchVH.itemView.context,
+                        R.font.vazir_light
+                    )
+
                 }
             } else {
-                matchVH.binding.tvStatus.visibility = View.VISIBLE
+                matchVH.binding.tvStatus.apply {
+                    val startDate = timestampToLocalTime(match.timestamp)
+                    text = startDate
+                    typeface = ResourcesCompat.getFont(
+                        matchVH.itemView.context,
+                        R.font.vazir_light
+                    )
+                }
+            }
+            if (match.matchStarted == false) {
+                matchVH.binding.tvScores.visibility = View.GONE
+            }
+            matchVH.binding.tvScores.apply {
+                text = context.getString(
+                    R.string.scores,
+                    match.awayTeamScore.toString(),
+                    match.homeTeamScore.toString()
+                )
+                typeface = ResourcesCompat.getFont(
+                    matchVH.itemView.context,
+                    R.font.vazir_medium
+                )
+
             }
         }
     }
 
-    private fun dpToPx(dp: Float): Float {
-        val resources = context.resources
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            resources.displayMetrics
-        )
+    private fun timestampToLocalTime(time: Long): String? {
+        return try {
+            val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val timestamp = Date(time * 1000)
+            format.format(timestamp)
+        } catch (e: Exception) {
+            e.toString()
+        }
     }
 
     override fun getItemCount(): Int {
