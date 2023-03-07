@@ -17,12 +17,12 @@ import javax.inject.Inject
 class LiveScoreViewModel @Inject constructor(private val liveScoreRepository: LiveScoreRepository) :
     ViewModel() {
     init {
-        getTodayMatches()
+        getLiveScores()
     }
 
     private val _uiState = MutableStateFlow(LiveScoreUiState())
     val uiState: StateFlow<LiveScoreUiState> = _uiState.asStateFlow()
-    private fun getTodayMatches() {
+    private fun getLiveScores() {
         viewModelScope.launch {
             liveScoreRepository.getTodayMatches().collectLatest { result ->
                 when (result) {
@@ -54,14 +54,15 @@ class LiveScoreViewModel @Inject constructor(private val liveScoreRepository: Li
         }
     }
 
-    fun onSortMatchStartTimeClick() {
-        val sorted =
-            _uiState.value.data.sortedByDescending { it.persianName }
-        viewModelScope.launch {
-            _uiState.update { currentState ->
-                currentState.copy(data = sorted)
+    fun toggleTimeSort(event: LiveScoreSortEvent) {
+        when (event) {
+            is LiveScoreSortEvent.Default -> {
+                getLiveScores()
+            }
+
+            is LiveScoreSortEvent.Time -> {
             }
         }
-
     }
+
 }
