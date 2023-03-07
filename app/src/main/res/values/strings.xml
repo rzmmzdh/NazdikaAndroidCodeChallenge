@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NazdikaAndroidCodeChallenge</string>
+    <string name="unsorted">Unsorted</string>
+    <string name="sorted">Sorted</string>
+    <string name="sort">Sort</string>
+    <string name="scores">%1$s : %2$s</string>
+    <string name="match_status">%1$s</string>
 </resources>
